@@ -10,7 +10,7 @@ export default function DashboardLayout({
         <SidebarProvider>
             <div className="min-h-screen bg-background flex">
                 <Sidebar />
-                <main className="flex-1 transition-all duration-300 w-full">
+                <main className="flex-1 transition-all duration-300 min-w-0">
                     {children}
                 </main>
             </div>

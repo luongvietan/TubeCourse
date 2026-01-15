@@ -18,7 +18,7 @@ export function DashboardHeader({
     const { toggleMobileSidebar } = useSidebar();
 
     return (
-        <header className="h-16 bg-card border-b border-border flex items-center justify-between px-4 md:px-6">
+        <header className="sticky top-0 z-40 w-full h-16 bg-card/80 backdrop-blur-sm border-b border-border flex items-center justify-between px-4 md:px-6">
             <div className="flex items-center gap-3">
                 {/* Mobile Toggle */}
                 <button

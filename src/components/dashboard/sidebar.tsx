@@ -33,7 +33,7 @@ export function Sidebar() {
         <>
             {/* Desktop Sidebar */}
             <aside
-                className={`hidden md:flex fixed left-0 top-0 h-screen bg-card border-r border-border flex-col transition-all duration-300 z-50 ${isCollapsed ? "w-20" : "w-64"
+                className={`hidden md:flex sticky top-0 h-screen bg-card border-r border-border flex-col transition-all duration-300 z-50 flex-shrink-0 ${isCollapsed ? "w-20" : "w-64"
                     }`}
             >
                 <SidebarContent isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} />
@@ -126,8 +126,8 @@ function SidebarContent({ isCollapsed, toggleSidebar, isMobile = false }: Sideba
                             key={item.href}
                             href={item.href}
                             className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all whitespace-nowrap ${active
-                                    ? "bg-accent/10 text-accent font-medium border border-accent/20"
-                                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                                ? "bg-accent/10 text-accent font-medium border border-accent/20"
+                                : "text-muted-foreground hover:bg-muted hover:text-foreground"
                                 } ${isCollapsed && !isMobile ? "justify-center" : ""}`}
                             title={isCollapsed ? item.label : undefined}
                         >
