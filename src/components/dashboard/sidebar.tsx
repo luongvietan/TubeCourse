@@ -15,6 +15,9 @@ import {
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useUser } from "@/hooks/use-user";
+import { useSidebar } from "@/components/dashboard/sidebar-context";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 const navItems = [
     { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
@@ -24,10 +27,42 @@ const navItems = [
 ];
 
 export function Sidebar() {
+    const { isCollapsed, toggleSidebar, isMobileOpen, closeMobileSidebar } = useSidebar();
+
+    return (
+        <>
+            {/* Desktop Sidebar */}
+            <aside
+                className={`hidden md:flex fixed left-0 top-0 h-screen bg-card border-r border-border flex-col transition-all duration-300 z-50 ${isCollapsed ? "w-20" : "w-64"
+                    }`}
+            >
+                <SidebarContent isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} />
+            </aside>
+
+            {/* Mobile Sidebar (Sheet) */}
+            <Sheet open={isMobileOpen} onOpenChange={closeMobileSidebar}>
+                <SheetContent side="left" className="p-0 w-64 bg-card border-r border-border">
+                    { /* Accessibility: DialogContent requires a Title */}
+                    <VisuallyHidden>
+                        <SheetTitle>Navigation Menu</SheetTitle>
+                    </VisuallyHidden>
+                    <SidebarContent isCollapsed={false} isMobile={true} />
+                </SheetContent>
+            </Sheet>
+        </>
+    );
+}
+
+interface SidebarContentProps {
+    isCollapsed: boolean;
+    toggleSidebar?: () => void;
+    isMobile?: boolean;
+}
+
+function SidebarContent({ isCollapsed, toggleSidebar, isMobile = false }: SidebarContentProps) {
     const pathname = usePathname();
     const router = useRouter();
     const { user } = useUser();
-    const [isCollapsed, setIsCollapsed] = useState(false);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
 
     const isActive = (href: string) => {
@@ -60,30 +95,29 @@ export function Sidebar() {
     const userEmail = user?.email || '';
 
     return (
-        <aside
-            className={`fixed left-0 top-0 h-screen bg-card border-r border-border flex flex-col transition-all duration-300 z-50 ${isCollapsed ? "w-20" : "w-64"
-                }`}
-        >
+        <div className="flex flex-col h-full w-full">
             {/* Logo */}
-            <div className="h-16 flex items-center justify-between px-4 border-b border-border">
-                <Link href="/dashboard" className="flex items-center gap-2">
+            <div className={`h-16 flex items-center ${isCollapsed ? "justify-center" : "justify-between px-4"} border-b border-border transition-all`}>
+                <Link href="/dashboard" className="flex items-center gap-2 overflow-hidden">
                     <div className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center flex-shrink-0">
                         <Play className="w-5 h-5 text-white fill-white" />
                     </div>
-                    {!isCollapsed && (
-                        <span className="text-lg font-semibold">TubeCourse</span>
+                    {(!isCollapsed || isMobile) && (
+                        <span className="text-lg font-semibold whitespace-nowrap">TubeCourse</span>
                     )}
                 </Link>
-                <button
-                    onClick={() => setIsCollapsed(!isCollapsed)}
-                    className="p-1.5 rounded-lg hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
-                >
-                    {isCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
-                </button>
+                {!isMobile && (
+                    <button
+                        onClick={toggleSidebar}
+                        className="p-1.5 rounded-lg hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
+                    >
+                        {isCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
+                    </button>
+                )}
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 p-4 space-y-1">
+            <nav className="flex-1 p-4 space-y-1 overflow-y-auto overflow-x-hidden">
                 {navItems.map((item) => {
                     const Icon = item.icon;
                     const active = isActive(item.href);
@@ -91,14 +125,14 @@ export function Sidebar() {
                         <Link
                             key={item.href}
                             href={item.href}
-                            className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${active
-                                ? "bg-accent text-white"
-                                : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                                } ${isCollapsed ? "justify-center" : ""}`}
+                            className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all whitespace-nowrap ${active
+                                    ? "bg-accent/10 text-accent font-medium border border-accent/20"
+                                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                                } ${isCollapsed && !isMobile ? "justify-center" : ""}`}
                             title={isCollapsed ? item.label : undefined}
                         >
-                            <Icon size={20} className="flex-shrink-0" />
-                            {!isCollapsed && <span className="font-medium">{item.label}</span>}
+                            <Icon size={20} className={`flex-shrink-0 ${active ? "text-accent" : ""}`} />
+                            {(!isCollapsed || isMobile) && <span>{item.label}</span>}
                         </Link>
                     );
                 })}
@@ -106,11 +140,11 @@ export function Sidebar() {
 
             {/* User Section */}
             <div className="p-4 border-t border-border">
-                <div className={`flex items-center gap-3 ${isCollapsed ? "justify-center" : ""}`}>
+                <div className={`flex items-center gap-3 ${isCollapsed && !isMobile ? "justify-center" : ""} overflow-hidden`}>
                     <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center flex-shrink-0">
                         <span className="text-sm font-medium text-accent">{userInitials}</span>
                     </div>
-                    {!isCollapsed && (
+                    {(!isCollapsed || isMobile) && (
                         <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium truncate">{userName}</p>
                             <p className="text-xs text-muted-foreground truncate">{userEmail}</p>
@@ -120,14 +154,14 @@ export function Sidebar() {
                 <button
                     onClick={handleLogout}
                     disabled={isLoggingOut}
-                    className={`mt-3 w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors disabled:opacity-50 ${isCollapsed ? "justify-center" : ""
+                    className={`mt-3 w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors disabled:opacity-50 whitespace-nowrap ${isCollapsed && !isMobile ? "justify-center" : ""
                         }`}
                     title={isCollapsed ? "Sign out" : undefined}
                 >
                     <LogOut size={20} className="flex-shrink-0" />
-                    {!isCollapsed && <span className="font-medium">{isLoggingOut ? "Signing out..." : "Sign out"}</span>}
+                    {(!isCollapsed || isMobile) && <span className="font-medium">{isLoggingOut ? "Signing out..." : "Sign out"}</span>}
                 </button>
             </div>
-        </aside>
+        </div>
     );
 }

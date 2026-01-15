@@ -9,6 +9,19 @@ import { createCourseSchema, type CreateCourseInput } from "@/schemas/course";
 import { createCourse } from "@/app/(dashboard)/actions";
 
 export function PlaylistInput() {
+    const LANGUAGES = [
+        { code: 'en', name: 'English' },
+        { code: 'es', name: 'Spanish' },
+        { code: 'fr', name: 'French' },
+        { code: 'de', name: 'German' },
+        { code: 'it', name: 'Italian' },
+        { code: 'pt', name: 'Portuguese' },
+        { code: 'vi', name: 'Vietnamese' },
+        { code: 'ja', name: 'Japanese' },
+        { code: 'ko', name: 'Korean' },
+        { code: 'zh', name: 'Chinese' },
+    ];
+
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [success, setSuccess] = useState<string | null>(null);
@@ -21,6 +34,10 @@ export function PlaylistInput() {
         reset,
     } = useForm<CreateCourseInput>({
         resolver: zodResolver(createCourseSchema),
+        defaultValues: {
+            playlist_url: '',
+            language: 'en'
+        }
     });
 
     const onSubmit = async (data: CreateCourseInput) => {
@@ -29,7 +46,7 @@ export function PlaylistInput() {
         setSuccess(null);
 
         try {
-            const result = await createCourse(data.playlist_url);
+            const result = await createCourse(data.playlist_url, data.language);
 
             if (result.error) {
                 setError(result.error);
@@ -83,17 +100,29 @@ export function PlaylistInput() {
             )}
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                <div className="relative">
-                    <LinkIcon
-                        size={18}
-                        className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
-                    />
-                    <input
-                        type="url"
-                        placeholder="https://www.youtube.com/playlist?list=..."
-                        className="w-full pl-12 pr-4 py-3 rounded-lg border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-colors"
-                        {...register("playlist_url")}
-                    />
+                <div className="flex flex-col md:flex-row gap-3">
+                    <div className="relative flex-1">
+                        <LinkIcon
+                            size={18}
+                            className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
+                        />
+                        <input
+                            type="url"
+                            placeholder="https://www.youtube.com/playlist?list=..."
+                            className="w-full pl-12 pr-4 py-3 rounded-lg border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-colors"
+                            {...register("playlist_url")}
+                        />
+                    </div>
+                    <div className="w-full md:w-[150px]">
+                        <select
+                            {...register("language")}
+                            className="w-full h-full px-4 py-3 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-colors appearance-none cursor-pointer"
+                        >
+                            {LANGUAGES.map(lang => (
+                                <option key={lang.code} value={lang.code}>{lang.name}</option>
+                            ))}
+                        </select>
+                    </div>
                 </div>
                 {errors.playlist_url && (
                     <p className="text-sm text-red-500">{errors.playlist_url.message}</p>

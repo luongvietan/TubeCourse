@@ -46,7 +46,7 @@ export async function getCourse(id: string): Promise<Course | null> {
     return course;
 }
 
-export async function createCourse(playlistUrl: string) {
+export async function createCourse(playlistUrl: string, language: string = 'en') {
     const supabase = await createClient();
 
     const { data: { user } } = await supabase.auth.getUser();
@@ -89,6 +89,7 @@ export async function createCourse(playlistUrl: string) {
             channel_name: 'Loading...', // Placeholder until background process finishes
             channel_id: 'unknown',
             status: 'pending',
+            target_language: language,
         })
         .select()
         .single();
@@ -104,6 +105,7 @@ export async function createCourse(playlistUrl: string) {
         name: 'course.create',
         data: {
             courseId: course.id,
+            targetLanguage: language,
         },
     });
 

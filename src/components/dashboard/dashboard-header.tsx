@@ -1,7 +1,8 @@
 "use client";
 
-import { Search, Bell, Plus } from "lucide-react";
+import { Search, Bell, Plus, Menu } from "lucide-react";
 import Link from "next/link";
+import { useSidebar } from "@/components/dashboard/sidebar-context";
 
 interface DashboardHeaderProps {
     title: string;
@@ -14,18 +15,30 @@ export function DashboardHeader({
     description,
     showAddButton = false,
 }: DashboardHeaderProps) {
+    const { toggleMobileSidebar } = useSidebar();
+
     return (
-        <header className="h-16 bg-card border-b border-border flex items-center justify-between px-6">
-            {/* Title */}
-            <div>
-                <h1 className="text-title">{title}</h1>
-                {description && (
-                    <p className="text-sm text-muted-foreground">{description}</p>
-                )}
+        <header className="h-16 bg-card border-b border-border flex items-center justify-between px-4 md:px-6">
+            <div className="flex items-center gap-3">
+                {/* Mobile Toggle */}
+                <button
+                    onClick={toggleMobileSidebar}
+                    className="md:hidden p-2 rounded-lg hover:bg-muted transition-colors text-muted-foreground"
+                >
+                    <Menu size={20} />
+                </button>
+
+                {/* Title */}
+                <div>
+                    <h1 className="text-lg md:text-xl font-semibold text-foreground">{title}</h1>
+                    {description && (
+                        <p className="hidden sm:block text-sm text-muted-foreground">{description}</p>
+                    )}
+                </div>
             </div>
 
             {/* Actions */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3 md:gap-4">
                 {/* Search */}
                 <div className="relative hidden md:block">
                     <Search
@@ -35,7 +48,7 @@ export function DashboardHeader({
                     <input
                         type="text"
                         placeholder="Search courses..."
-                        className="w-64 pl-10 pr-4 py-2 rounded-lg border border-border bg-background text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-colors"
+                        className="w-48 lg:w-64 pl-10 pr-4 py-2 rounded-lg border border-border bg-background text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-colors"
                     />
                 </div>
 
@@ -43,7 +56,7 @@ export function DashboardHeader({
                 {showAddButton && (
                     <Link
                         href="/dashboard"
-                        className="btn-primary text-sm py-2 px-4"
+                        className="btn-primary text-sm py-2 px-3 md:px-4"
                     >
                         <Plus size={18} />
                         <span className="hidden sm:inline">Add Playlist</span>

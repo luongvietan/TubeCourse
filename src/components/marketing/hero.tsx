@@ -1,11 +1,25 @@
 "use client";
 
 import Link from "next/link";
+import BlurText from "@/components/reactbits/BlurText";
+import Squares from "@/components/reactbits/Squares";
+import { Button } from "@/components/ui/button";
 
 export function Hero() {
     return (
-        <section className="min-h-[90vh] flex items-center pt-24 pb-16">
-            <div className="container-custom">
+        <section className="relative min-h-[90vh] flex items-center pt-24 pb-16 overflow-hidden">
+            {/* Background Squares */}
+            <div className="absolute inset-0 z-0 opacity-20 pointer-events-none">
+                <Squares
+                    direction="diagonal"
+                    speed={0.5}
+                    squareSize={50}
+                    borderColor="#333"
+                    hoverFillColor="#222"
+                />
+            </div>
+
+            <div className="container-custom relative z-10">
                 <div className="max-w-3xl">
                     {/* Eyebrow */}
                     <div className="mb-6">
@@ -16,8 +30,18 @@ export function Hero() {
 
                     {/* Main Heading */}
                     <h1 className="text-display mb-6">
-                        Turn any YouTube playlist into a{" "}
-                        <span className="text-accent">complete course</span>
+                        <BlurText
+                            text="Turn any YouTube playlist into a"
+                            className="inline-block mr-2"
+                            delay={0.05}
+                        />
+                        <span className="block text-accent">
+                            <BlurText
+                                text="complete course"
+                                className="inline-block text-accent"
+                                delay={0.05}
+                            />
+                        </span>
                     </h1>
 
                     {/* Subheading */}
@@ -28,13 +52,15 @@ export function Hero() {
 
                     {/* CTA */}
                     <div className="flex flex-col sm:flex-row items-start gap-4">
-                        <Link href="/register" className="btn-primary">
-                            Try it free
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                            </svg>
-                        </Link>
-                        <p className="text-caption">
+                        <Button asChild size="lg" className="font-medium">
+                            <Link href="/register">
+                                Try it free
+                                <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                                </svg>
+                            </Link>
+                        </Button>
+                        <p className="text-caption self-center">
                             No credit card required
                         </p>
                     </div>

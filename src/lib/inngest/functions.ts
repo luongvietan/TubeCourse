@@ -97,6 +97,7 @@ export const processCourse = inngest.createFunction(
                     videoId: video.id,
                     youtubeVideoId: video.video_id,
                     videoTitle: video.title,
+                    targetLanguage: course.target_language || 'en',
                 },
             }));
 
@@ -120,7 +121,7 @@ export const summarizeVideo = inngest.createFunction(
     },
     { event: "video.summarize" },
     async ({ event, step }) => {
-        const { courseId, videoId, youtubeVideoId, videoTitle } = event.data;
+        const { courseId, videoId, youtubeVideoId, videoTitle, targetLanguage } = event.data;
 
         await step.run("update-video-transcribing", async () => {
             await supabaseAdmin
@@ -170,7 +171,7 @@ export const summarizeVideo = inngest.createFunction(
 
         try {
             const summary = await step.run("generate-summary", async () => {
-                return await generateSummary(transcript, videoTitle);
+                return await generateSummary(transcript, videoTitle, targetLanguage || 'en');
             });
 
             await step.run("save-summary", async () => {

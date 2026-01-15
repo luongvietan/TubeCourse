@@ -12,17 +12,22 @@ const SummarySchema = z.object({
     })).default([])
 });
 
-const SUMMARY_SYSTEM_PROMPT = `You are an expert at summarizing educational video content. Your task is to:
-1. Create a concise yet comprehensive summary of the video transcript
-2. Extract key points and main takeaways
-3. Identify important timestamps if provided
-4. Use clear, professional language
+const SUMMARY_SYSTEM_PROMPT = (language: string) => `You are an expert AI tutor and educational content summarizer. Your goal is to help students and teachers understand the video content efficiently.
+
+Your task is to:
+1. Create a concise yet comprehensive summary of the video transcript.
+2. Extract KEY LEARNING OUTCOMES: What will the student be able to do or understand?
+3. Synthesize MAIN TAKEAWAYS: The core concepts explained.
+4. Identify IMPORTANT TIMESTAMPS: Key moments in the video.
+5. Create 3-5 REVIEW QUESTIONS: To test understanding.
+6. Use clear, professional, yet accessible language suitable for learners.
+7. OUTPUT IN THE FOLLOWING LANGUAGE: ${language}
 
 Format your response as JSON with the following structure:
 {
-  "content": "The main summary text",
-  "key_points": ["Point 1", "Point 2", ...],
-  "timestamps": [{"time": "00:00", "text": "Topic discussed"}, ...]
+  "content": "A comprehensive markdown string containing:\n## Summary\n[Main summary text]\n\n## Key Takeaways\n- [Takeaway 1]\n- [Takeaway 2]\n\n## Review Questions\n1. [Question 1]\n2. [Question 2] (in ${language})",
+  "key_points": ["Takeaway 1", "Takeaway 2", ...],
+  "timestamps": [{"time": "00:00", "text": "Topic discussed"}]
 }`;
 
 
@@ -49,13 +54,14 @@ function splitTranscript(transcript: string, maxChunkLength = 12000): string[] {
 
 export async function summarizeVideo(
     transcript: string,
-    videoTitle: string
+    videoTitle: string,
+    targetLanguage: string = 'English'
 ): Promise<Omit<Summary, 'id' | 'video_id' | 'course_id' | 'created_at' | 'updated_at'>> {
     const chunks = splitTranscript(transcript);
 
     // If only one chunk, proceed as normal
     if (chunks.length === 1) {
-        return generateSingleSummary(chunks[0], videoTitle);
+        return generateSingleSummary(chunks[0], videoTitle, targetLanguage);
     }
 
     // Map-Reduce for multiple chunks
@@ -82,18 +88,19 @@ export async function summarizeVideo(
 
     // Reduce: Synthesize the chunks
     const combinedSummary = chunkSummaries.join('\n\n');
-    return generateSingleSummary(combinedSummary, videoTitle, true);
+    return generateSingleSummary(combinedSummary, videoTitle, targetLanguage, true);
 }
 
 // Renamed original function to internal helper
 async function generateSingleSummary(
     contentToSummarize: string,
     videoTitle: string,
+    targetLanguage: string,
     isRefinement = false
 ): Promise<Omit<Summary, 'id' | 'video_id' | 'course_id' | 'created_at' | 'updated_at'>> {
     const systemPrompt = isRefinement
-        ? SUMMARY_SYSTEM_PROMPT + "\n\nNote: You are synthesizing multiple partial summaries into one cohesive final summary."
-        : SUMMARY_SYSTEM_PROMPT;
+        ? SUMMARY_SYSTEM_PROMPT(targetLanguage) + "\n\nNote: You are synthesizing multiple partial summaries into one cohesive final summary."
+        : SUMMARY_SYSTEM_PROMPT(targetLanguage);
 
     const response = await createCompletion({
         model: AI_MODELS.SUMMARY,

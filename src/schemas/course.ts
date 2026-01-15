@@ -12,6 +12,7 @@ export const createCourseSchema = z.object({
             (url) => url.includes('list='),
             'Please enter a YouTube playlist URL (must contain a playlist ID)'
         ),
+    language: z.string(),
 });
 
 export const updateCourseSchema = z.object({
