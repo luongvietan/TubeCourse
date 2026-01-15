@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { updateSession } from '@/lib/supabase/middleware';
+import { createClient } from '@/lib/supabase/server';
 
 // Routes that require authentication
 const protectedRoutes = ['/dashboard'];
@@ -8,14 +9,12 @@ const protectedRoutes = ['/dashboard'];
 const authRoutes = ['/login', '/register', '/forgot-password'];
 
 export async function middleware(request: NextRequest) {
-    // Update the session
-    const response = await updateSession(request);
+    // Update the session and get the user/response in one go
+    // This avoids a second redundant call to getUser()
+    const { response, user } = await updateSession(request);
 
+    const isAuthenticated = !!user;
     const { pathname } = request.nextUrl;
-
-    // Check for auth session in response cookies
-    const supabaseAuthToken = request.cookies.get('sb-bduxmjqqionlkehrzdzj-auth-token');
-    const isAuthenticated = !!supabaseAuthToken;
 
     // Protect dashboard routes
     const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));

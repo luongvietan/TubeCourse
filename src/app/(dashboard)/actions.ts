@@ -2,7 +2,8 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
-import type { Course } from '@/types';
+import type { Course, Video } from '@/types';
+import { inngest } from '@/lib/inngest/client';
 
 export async function getCourses(): Promise<Course[]> {
     const supabase = await createClient();
@@ -54,9 +55,13 @@ export async function createCourse(playlistUrl: string) {
     }
 
     // Extract playlist ID from URL
+    // Supports common formats:
+    // - youtube.com/playlist?list=ID
+    // - youtube.com/watch?v=ID&list=ID
+    // - watch?v=ID&list=ID
     const playlistIdMatch = playlistUrl.match(/[?&]list=([^&]+)/);
     if (!playlistIdMatch) {
-        return { error: 'Invalid YouTube playlist URL' };
+        return { error: 'Invalid YouTube playlist URL. Please make sure it contains a "list=" parameter.' };
     }
 
     const playlist_id = playlistIdMatch[1];
@@ -80,8 +85,8 @@ export async function createCourse(playlistUrl: string) {
             user_id: user.id,
             playlist_id,
             playlist_url: playlistUrl,
-            title: `Playlist ${playlist_id}`,
-            channel_name: 'Unknown',
+            title: `Playlist ${playlist_id}`, // TODO: Fetch real title from YouTube API
+            channel_name: 'Loading...', // Placeholder until background process finishes
             channel_id: 'unknown',
             status: 'pending',
         })
@@ -92,6 +97,15 @@ export async function createCourse(playlistUrl: string) {
         console.error('Error creating course:', error);
         return { error: 'Failed to create course' };
     }
+
+    // Trigger background processing (Fire and forget)
+    // Directly use Inngest client since we are in a server action
+    await inngest.send({
+        name: 'course.create',
+        data: {
+            courseId: course.id,
+        },
+    });
 
     revalidatePath('/dashboard');
     revalidatePath('/dashboard/courses');
@@ -162,3 +176,25 @@ export async function getDashboardStats() {
         completedCourses: completedCourses || 0,
     };
 }
+
+export async function getVideos(courseId: string): Promise<Video[]> {
+    const supabase = await createClient();
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return [];
+
+    const { data: videos, error } = await supabase
+        .from('videos')
+        .select('*, courses!inner(*)')
+        .eq('course_id', courseId)
+        .eq('courses.user_id', user.id)
+        .order('position', { ascending: true });
+
+    if (error) {
+        console.error('Error fetching videos:', error);
+        return [];
+    }
+
+    return videos || [];
+}
+
