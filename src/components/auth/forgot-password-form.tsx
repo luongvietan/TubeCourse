@@ -6,10 +6,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, ArrowLeft, CheckCircle2 } from "lucide-react";
 import { forgotPasswordSchema, type ForgotPasswordInput } from "@/schemas/auth";
+import { createClient } from "@/lib/supabase/client";
 
 export function ForgotPasswordForm() {
     const [isLoading, setIsLoading] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     const {
         register,
@@ -22,13 +24,26 @@ export function ForgotPasswordForm() {
 
     const onSubmit = async (data: ForgotPasswordInput) => {
         setIsLoading(true);
+        setError(null);
+
         try {
-            // TODO: Implement actual forgot password logic with Supabase
-            console.log("Forgot password data:", data);
-            await new Promise((resolve) => setTimeout(resolve, 1000));
+            const supabase = createClient();
+            const { error: resetError } = await supabase.auth.resetPasswordForEmail(
+                data.email,
+                {
+                    redirectTo: `${window.location.origin}/auth/callback?next=/reset-password`,
+                }
+            );
+
+            if (resetError) {
+                setError(resetError.message);
+                return;
+            }
+
             setIsSubmitted(true);
-        } catch (error) {
-            console.error("Forgot password error:", error);
+        } catch (err) {
+            console.error("Forgot password error:", err);
+            setError("An unexpected error occurred. Please try again.");
         } finally {
             setIsLoading(false);
         }
@@ -70,6 +85,13 @@ export function ForgotPasswordForm() {
             <p className="text-body text-center">
                 Enter your email address and we&apos;ll send you a link to reset your password.
             </p>
+
+            {/* Error Message */}
+            {error && (
+                <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 text-sm">
+                    {error}
+                </div>
+            )}
 
             {/* Email Field */}
             <div className="space-y-2">

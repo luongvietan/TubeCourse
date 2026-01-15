@@ -1,13 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, Sparkles, Link as LinkIcon } from "lucide-react";
+import { Loader2, Sparkles, Link as LinkIcon, CheckCircle, AlertCircle } from "lucide-react";
 import { createCourseSchema, type CreateCourseInput } from "@/schemas/course";
+import { createCourse } from "@/app/(dashboard)/actions";
 
 export function PlaylistInput() {
+    const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
+    const [success, setSuccess] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
     const {
         register,
@@ -20,13 +25,28 @@ export function PlaylistInput() {
 
     const onSubmit = async (data: CreateCourseInput) => {
         setIsLoading(true);
+        setError(null);
+        setSuccess(null);
+
         try {
-            // TODO: Implement actual course creation with API
-            console.log("Create course:", data);
-            await new Promise((resolve) => setTimeout(resolve, 2000));
+            const result = await createCourse(data.playlist_url);
+
+            if (result.error) {
+                setError(result.error);
+                return;
+            }
+
+            setSuccess("Course created! Processing playlist...");
             reset();
-        } catch (error) {
-            console.error("Create course error:", error);
+            router.refresh();
+
+            // Navigate to courses after a short delay
+            setTimeout(() => {
+                setSuccess(null);
+            }, 3000);
+        } catch (err) {
+            console.error("Create course error:", err);
+            setError("An unexpected error occurred. Please try again.");
         } finally {
             setIsLoading(false);
         }
@@ -45,6 +65,22 @@ export function PlaylistInput() {
                     </p>
                 </div>
             </div>
+
+            {/* Success Message */}
+            {success && (
+                <div className="mb-4 p-3 rounded-lg bg-green-500/10 border border-green-500/20 text-green-600 text-sm flex items-center gap-2">
+                    <CheckCircle size={16} />
+                    {success}
+                </div>
+            )}
+
+            {/* Error Message */}
+            {error && (
+                <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 text-sm flex items-center gap-2">
+                    <AlertCircle size={16} />
+                    {error}
+                </div>
+            )}
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div className="relative">

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
     Play,
     LayoutDashboard,
@@ -13,6 +13,8 @@ import {
     ChevronRight,
 } from "lucide-react";
 import { useState } from "react";
+import { createClient } from "@/lib/supabase/client";
+import { useUser } from "@/hooks/use-user";
 
 const navItems = [
     { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
@@ -23,7 +25,10 @@ const navItems = [
 
 export function Sidebar() {
     const pathname = usePathname();
+    const router = useRouter();
+    const { user } = useUser();
     const [isCollapsed, setIsCollapsed] = useState(false);
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
 
     const isActive = (href: string) => {
         if (href === "/dashboard") {
@@ -31,6 +36,28 @@ export function Sidebar() {
         }
         return pathname.startsWith(href);
     };
+
+    const handleLogout = async () => {
+        setIsLoggingOut(true);
+        try {
+            const supabase = createClient();
+            await supabase.auth.signOut();
+            router.push("/login");
+            router.refresh();
+        } catch (error) {
+            console.error("Logout error:", error);
+        } finally {
+            setIsLoggingOut(false);
+        }
+    };
+
+    // Get user initials
+    const userInitials = user?.user_metadata?.full_name
+        ? user.user_metadata.full_name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)
+        : user?.email?.slice(0, 2).toUpperCase() || 'U';
+
+    const userName = user?.user_metadata?.full_name || 'User';
+    const userEmail = user?.email || '';
 
     return (
         <aside
@@ -65,8 +92,8 @@ export function Sidebar() {
                             key={item.href}
                             href={item.href}
                             className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${active
-                                    ? "bg-accent text-white"
-                                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                                ? "bg-accent text-white"
+                                : "text-muted-foreground hover:bg-muted hover:text-foreground"
                                 } ${isCollapsed ? "justify-center" : ""}`}
                             title={isCollapsed ? item.label : undefined}
                         >
@@ -81,22 +108,24 @@ export function Sidebar() {
             <div className="p-4 border-t border-border">
                 <div className={`flex items-center gap-3 ${isCollapsed ? "justify-center" : ""}`}>
                     <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center flex-shrink-0">
-                        <span className="text-sm font-medium text-accent">JD</span>
+                        <span className="text-sm font-medium text-accent">{userInitials}</span>
                     </div>
                     {!isCollapsed && (
                         <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium truncate">John Doe</p>
-                            <p className="text-xs text-muted-foreground truncate">john@example.com</p>
+                            <p className="text-sm font-medium truncate">{userName}</p>
+                            <p className="text-xs text-muted-foreground truncate">{userEmail}</p>
                         </div>
                     )}
                 </div>
                 <button
-                    className={`mt-3 w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors ${isCollapsed ? "justify-center" : ""
+                    onClick={handleLogout}
+                    disabled={isLoggingOut}
+                    className={`mt-3 w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors disabled:opacity-50 ${isCollapsed ? "justify-center" : ""
                         }`}
                     title={isCollapsed ? "Sign out" : undefined}
                 >
                     <LogOut size={20} className="flex-shrink-0" />
-                    {!isCollapsed && <span className="font-medium">Sign out</span>}
+                    {!isCollapsed && <span className="font-medium">{isLoggingOut ? "Signing out..." : "Sign out"}</span>}
                 </button>
             </div>
         </aside>

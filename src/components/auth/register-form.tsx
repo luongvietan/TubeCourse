@@ -2,15 +2,20 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Loader2, CheckCircle } from "lucide-react";
 import { registerSchema, type RegisterInput } from "@/schemas/auth";
+import { createClient } from "@/lib/supabase/client";
 
 export function RegisterForm() {
+    const router = useRouter();
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [success, setSuccess] = useState<string | null>(null);
 
     const {
         register,
@@ -22,12 +27,31 @@ export function RegisterForm() {
 
     const onSubmit = async (data: RegisterInput) => {
         setIsLoading(true);
+        setError(null);
+        setSuccess(null);
+
         try {
-            // TODO: Implement actual register logic with Supabase
-            console.log("Register data:", data);
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-        } catch (error) {
-            console.error("Register error:", error);
+            const supabase = createClient();
+            const { error: authError } = await supabase.auth.signUp({
+                email: data.email,
+                password: data.password,
+                options: {
+                    data: {
+                        full_name: data.full_name || undefined,
+                    },
+                    emailRedirectTo: `${window.location.origin}/auth/callback`,
+                },
+            });
+
+            if (authError) {
+                setError(authError.message);
+                return;
+            }
+
+            setSuccess("Check your email to confirm your account!");
+        } catch (err) {
+            console.error("Register error:", err);
+            setError("An unexpected error occurred. Please try again.");
         } finally {
             setIsLoading(false);
         }
@@ -35,6 +59,21 @@ export function RegisterForm() {
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+            {/* Error Message */}
+            {error && (
+                <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 text-sm">
+                    {error}
+                </div>
+            )}
+
+            {/* Success Message */}
+            {success && (
+                <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20 text-green-500 text-sm flex items-center gap-2">
+                    <CheckCircle size={16} />
+                    {success}
+                </div>
+            )}
+
             {/* Name Field */}
             <div className="space-y-2">
                 <label htmlFor="full_name" className="text-sm font-medium text-foreground">
@@ -128,7 +167,7 @@ export function RegisterForm() {
             {/* Submit Button */}
             <button
                 type="submit"
-                disabled={isLoading}
+                disabled={isLoading || !!success}
                 className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
             >
                 {isLoading ? (

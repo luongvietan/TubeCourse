@@ -2,14 +2,18 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { loginSchema, type LoginInput } from "@/schemas/auth";
+import { createClient } from "@/lib/supabase/client";
 
 export function LoginForm() {
+    const router = useRouter();
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     const {
         register,
@@ -21,12 +25,25 @@ export function LoginForm() {
 
     const onSubmit = async (data: LoginInput) => {
         setIsLoading(true);
+        setError(null);
+
         try {
-            // TODO: Implement actual login logic with Supabase
-            console.log("Login data:", data);
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-        } catch (error) {
-            console.error("Login error:", error);
+            const supabase = createClient();
+            const { error: authError } = await supabase.auth.signInWithPassword({
+                email: data.email,
+                password: data.password,
+            });
+
+            if (authError) {
+                setError(authError.message);
+                return;
+            }
+
+            router.push("/dashboard");
+            router.refresh();
+        } catch (err) {
+            console.error("Login error:", err);
+            setError("An unexpected error occurred. Please try again.");
         } finally {
             setIsLoading(false);
         }
@@ -34,6 +51,13 @@ export function LoginForm() {
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+            {/* Error Message */}
+            {error && (
+                <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 text-sm">
+                    {error}
+                </div>
+            )}
+
             {/* Email Field */}
             <div className="space-y-2">
                 <label htmlFor="email" className="text-sm font-medium text-foreground">
