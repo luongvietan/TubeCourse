@@ -9,32 +9,39 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 
-  /* Colors - Refined Premium Palette */
-  --color-background: #ffffff;
-  --color-foreground: #09090b;
-  /* Zinc 950 */
-  --color-muted: #f4f4f5;
-  /* Zinc 100 */
-  --color-muted-foreground: #71717a;
-  /* Zinc 500 */
+  /* Colors - Airy Mint Glass Palette */
+  --color-background: #f8fafc;
+  /* Slate 50 - Airy Foundation */
+  --color-foreground: #0f172a;
+  /* Slate 900 */
 
-  /* Accent - Violet/Indigo for Education/Premium feel */
-  --color-accent: #6d28d9;
-  /* Violet 700 */
-  --color-accent-hover: #5b21b6;
-  /* Violet 800 */
-  --color-accent-light: #ddd6fe;
-  /* Violet 200 */
+  --color-muted: #f1f5f9;
+  /* Slate 100 */
+  --color-muted-foreground: #64748b;
+  /* Slate 500 */
+
+  /* Accent - Strong Mint for Premium/Fresh feel */
+  --color-accent: #10b981;
+  /* Emerald 500 / Strong Mint */
+  --color-accent-hover: #059669;
+  /* Emerald 600 */
+  --color-accent-light: #d1fae5;
+  /* Emerald 100 / Light Mint */
   --color-accent-foreground: #ffffff;
 
-  --color-border: #e4e4e7;
-  /* Zinc 200 */
-  --color-border-dashed: #d4d4d8;
-  /* Zinc 300 */
-  --color-card: #ffffff;
-  --color-card-hover: #fafafa;
-  --color-surface: #f8fafc;
-  /* Slate 50 */
+  --color-border: #e2e8f0;
+  /* Slate 200 */
+  --color-border-dashed: #cbd5e1;
+  /* Slate 300 */
+  --color-card: rgba(255, 255, 255, 0.6);
+  /* Glass effect base */
+  --color-card-hover: rgba(255, 255, 255, 0.8);
+  --color-surface: #ffffff;
+
+  /* Glassmorphism Variables */
+  --glass-blur: 16px;
+  --glass-border: rgba(255, 255, 255, 0.4);
+  --glass-shadow: rgba(0, 0, 0, 0.05);
 
   /* Spacing */
   --spacing-section: 7rem;
@@ -42,39 +49,38 @@
 
   /* Border Radius */
   --radius-sm: 0.375rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
+  --radius-md: 0.75rem;
+  /* Larger radius for premium feel */
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
   --radius-full: 9999px;
 }
 
 @media (prefers-color-scheme: dark) {
   @theme {
-    --color-background: #09090b;
-    /* Zinc 950 */
-    --color-foreground: #fafafa;
-    /* Zinc 50 */
-    --color-muted: #27272a;
-    /* Zinc 800 */
-    --color-muted-foreground: #a1a1aa;
-    /* Zinc 400 */
+    --color-background: #020617;
+    /* Slate 950 */
+    --color-foreground: #f8fafc;
+    /* Slate 50 */
+    --color-muted: #1e293b;
+    /* Slate 800 */
+    --color-muted-foreground: #94a3b8;
+    /* Slate 400 */
 
-    --color-accent: #7c3aed;
-    /* Violet 600 */
-    --color-accent-hover: #8b5cf6;
-    /* Violet 500 */
-    --color-accent-light: #2e1065;
-    /* Violet 950 */
+    --color-accent: #10b981;
+    /* Keep Mint in dark mode */
+    --color-accent-hover: #34d399;
+    /* Lighter mint for hover */
+    --color-accent-light: rgba(16, 185, 129, 0.1);
     --color-accent-foreground: #ffffff;
 
-    --color-border: #27272a;
-    /* Zinc 800 */
-    --color-border-dashed: #3f3f46;
-    /* Zinc 700 */
-    --color-card: #09090b;
-    --color-card-hover: #18181b;
-    /* Zinc 900 */
-    --color-surface: #18181b;
+    --color-border: rgba(255, 255, 255, 0.1);
+    --color-border-dashed: rgba(255, 255, 255, 0.15);
+    --color-card: rgba(15, 23, 42, 0.4);
+    --color-card-hover: rgba(15, 23, 42, 0.6);
+    --color-surface: #0f172a;
+
+    --glass-border: rgba(255, 255, 255, 0.05);
   }
 }
 
@@ -212,22 +218,28 @@ body {
   background: var(--color-muted);
 }
 
-/* Card Styles - Simplified */
-.card {
+/* Card Styles - Airy Glass */
+.card-glass {
   background: var(--color-card);
-  border: 1px solid var(--color-border);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 32px 0 var(--glass-shadow);
   border-radius: var(--radius-lg);
-  transition: border-color 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.card:hover {
-  border-color: var(--color-muted-foreground);
+.card-glass:hover {
+  background: var(--color-card-hover);
+  border-color: rgba(255, 255, 255, 0.6);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px 0 var(--glass-shadow);
 }
 
 .card-elevated {
-  background: var(--color-card);
+  background: var(--color-surface);
   border-radius: var(--radius-lg);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 6px 16px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03), 0 12px 32px rgba(0, 0, 0, 0.04);
 }
 
 /* Tags/Badges */
