@@ -25,7 +25,7 @@ Your task is to:
 
 Format your response as JSON with the following structure:
 {
-  "content": "A comprehensive markdown string containing:\n## Summary\n[Main summary text]\n\n## Key Takeaways\n- [Takeaway 1]\n- [Takeaway 2]\n\n## Review Questions\n1. [Question 1]\n2. [Question 2] (in ${language})",
+  "content": "A comprehensive markdown string. strictly following this format:\n\n## Summary\n[Main summary text]\n\n## Key Takeaways\n- [Takeaway 1]\n- [Takeaway 2]\n\n## Review Questions\n1. [Question 1]\n2. [Question 2] (in ${language})\n\nIMPORTANT: Use ## (H2) for these section headers.",
   "key_points": ["Takeaway 1", "Takeaway 2", ...],
   "timestamps": [{"time": "00:00", "text": "Topic discussed"}]
 }`;

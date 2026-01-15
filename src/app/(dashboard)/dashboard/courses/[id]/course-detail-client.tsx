@@ -18,6 +18,7 @@ import { CopyButton } from "@/components/shared/copy-button";
 import { ShareButton } from "@/components/shared/share-button";
 import { Course, Video } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
+import MarkdownRenderer from "@/components/shared/markdown-renderer";
 
 interface CourseDetailClientProps {
     course: Course;
@@ -167,7 +168,7 @@ export default function CourseDetailClient({ course, videos }: CourseDetailClien
                                     </div>
                                     <h4 className="font-medium mb-2">{selectedVideo.title}</h4>
                                     {selectedVideo.summary ? (
-                                        <p className="text-body">{selectedVideo.summary}</p>
+                                        <MarkdownRenderer content={selectedVideo.summary} />
                                     ) : (
                                         <div className="p-8 text-center bg-muted/50 rounded-lg">
                                             <p className="text-muted-foreground italic">
