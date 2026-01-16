@@ -1,5 +1,7 @@
 "use client";
 
+import { Magnetic } from "@/components/ui/magnetic";
+
 const niches = [
     { name: "Programming", highlighted: true },
     { name: "Web Development", highlighted: true },
@@ -21,44 +23,47 @@ const niches = [
 
 export function Niches() {
     return (
-        <section className="section-padding bg-background">
-            <div className="container-custom">
-                {/* Section Header */}
-                <div className="text-center mb-12">
-                    <span className="inline-block px-4 py-1.5 bg-accent/10 text-accent text-sm font-medium rounded-full mb-4">
-                        All Categories
-                    </span>
-                    <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                        Works With Any Topic
+        <section className="py-32 px-6 relative bg-white overflow-hidden border-t border-text-main/5">
+            <div className="container-custom relative z-10">
+                <div className="text-center mb-20 relative">
+                    <span className="text-[0.65rem] font-bold uppercase tracking-[0.4em] text-text-sub mb-4 block">INFINITE POSSIBILITIES</span>
+                    <h2 className="text-4xl md:text-6xl font-jp font-medium leading-[1.1] text-text-main mb-8 italic">
+                        Topic Agnostic Mastery.
                     </h2>
-                    <p className="text-muted-foreground max-w-2xl mx-auto">
-                        From coding tutorials to cooking classes - if it&apos;s on YouTube, we can transform it.
+                    <p className="text-[0.85rem] text-text-sub font-jp leading-relaxed max-w-2xl mx-auto opacity-70">
+                        From deep coding tutorials to ancient history lectures—if it exists on YouTube, <br />
+                        we extract the core essence and transform it into a structured path.
                     </p>
+                    <div className="story-line absolute left-1/2 -bottom-10 -translate-x-1/2 h-16 w-px opacity-10" />
                 </div>
 
-                {/* Niches Cloud */}
-                <div className="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto">
+                <div className="flex flex-wrap justify-center gap-4 max-w-5xl mx-auto pt-16">
                     {niches.map((niche, index) => (
-                        <span
-                            key={index}
-                            className={`
-                px-4 py-2 rounded-full text-sm font-medium transition-all cursor-default
-                ${niche.highlighted
-                                    ? "bg-accent text-accent-foreground shadow-lg shadow-accent/25"
-                                    : "bg-muted text-muted-foreground hover:bg-accent/10 hover:text-accent"
-                                }
-              `}
-                        >
-                            {niche.name}
-                        </span>
+                        <Magnetic key={index}>
+                            <div
+                                className={`
+                                    px-8 py-3.5 rounded-[2rem] text-[0.6rem] font-bold uppercase tracking-[0.25em] transition-all cursor-default border
+                                    ${niche.highlighted
+                                        ? "bg-text-main text-bg-main border-transparent shadow-xl"
+                                        : "bg-white text-text-main border-text-main/10 hover:border-text-main/40 hover:bg-text-main/5"
+                                    }
+                                `}
+                            >
+                                {niche.name}
+                            </div>
+                        </Magnetic>
                     ))}
                 </div>
 
-                {/* Additional Note */}
-                <p className="text-center text-sm text-muted-foreground mt-8">
-                    <span className="text-accent font-medium">+50 more categories</span> supported
-                </p>
+                <div className="mt-20 text-center">
+                    <p className="text-[0.6rem] font-bold uppercase tracking-[0.4em] text-text-sub/30 italic">
+                        +50 more disciplines supported
+                    </p>
+                </div>
             </div>
+
+            <div className="story-line absolute top-0 bottom-0 left-12 w-px opacity-[0.03]" />
+            <div className="story-line absolute top-0 bottom-0 right-12 w-px opacity-[0.03]" />
         </section>
     );
 }

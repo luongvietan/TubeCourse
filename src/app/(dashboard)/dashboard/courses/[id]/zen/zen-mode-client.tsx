@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import { Course, Video } from "@/types";
 import { TracingBeam } from "@/components/ui/aceternity/tracing-beam";
-import { BackgroundBeams } from "@/components/ui/aceternity/background-beams";
 import { HookCard } from "@/components/course/hook-card";
 import { InteractiveSummaryBlock } from "@/components/course/interactive-summary-block";
 import { TimeSavedBadge } from "@/components/course/time-saved-badge";
@@ -19,7 +18,7 @@ interface ZenModeClientProps {
 export default function ZenModeClient({ course, videos }: ZenModeClientProps) {
     const [showHook, setShowHook] = useState(true);
     const [isFullscreen, setIsFullscreen] = useState(false);
-    const [selectedVideo, setSelectedVideo] = useState<Video | null>(
+    const [selectedVideo] = useState<Video | null>(
         videos.find((v) => v.status === "completed") || null
     );
 
@@ -35,9 +34,9 @@ export default function ZenModeClient({ course, videos }: ZenModeClientProps) {
     // Extract hooks from the first video's summary (simulated)
     const hooks = selectedVideo
         ? [
-            "Video này giải thích về cách xây dựng ứng dụng AI hiện đại một cách nhanh chóng.",
-            "Bạn sẽ học được cách tích hợp OpenAI API vào Next.js project.",
-            "Cuối cùng, bạn sẽ deploy lên Production chỉ trong 30 phút.",
+            "This video explains how to build modern AI applications quickly.",
+            "You will learn how to integrate OpenAI API into your Next.js project.",
+            "Finally, you will deploy to Production in just 30 minutes.",
         ]
         : [];
 
@@ -84,25 +83,25 @@ export default function ZenModeClient({ course, videos }: ZenModeClientProps) {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50/20 relative overflow-x-hidden">
-            {/* Background Beams Effect */}
-            <BackgroundBeams className="opacity-30" />
+        <div className="min-h-screen bg-bg-main relative overflow-x-hidden font-jp">
+            {/* Background Texture/Noise */}
+            <div className="noise-bg absolute inset-0 opacity-[0.03] pointer-events-none" />
 
             {/* Exit Zen Mode Button */}
-            <div className="fixed top-6 right-6 z-50 flex items-center gap-2">
+            <div className="fixed top-8 right-10 z-50 flex items-center gap-4">
                 <button
                     onClick={toggleFullscreen}
-                    className="p-3 rounded-full card-glass border-white/40 hover:bg-white/80 transition-all shadow-lg"
+                    className="w-12 h-12 rounded-full border border-text-main/10 flex items-center justify-center hover:bg-text-main hover:text-bg-main transition-all group active:scale-95 bg-white/50 backdrop-blur-md"
                     title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
                 >
-                    {isFullscreen ? <Minimize2 size={20} className="text-slate-700" /> : <Maximize2 size={20} className="text-slate-700" />}
+                    {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
                 </button>
                 <Link
                     href={`/dashboard/courses/${course.id}`}
-                    className="p-3 rounded-full card-glass border-white/40 hover:bg-white/80 transition-all shadow-lg"
+                    className="w-12 h-12 rounded-full border border-text-main/10 flex items-center justify-center hover:bg-text-main hover:text-bg-main transition-all active:scale-95 bg-white/50 backdrop-blur-md"
                     title="Exit Zen Mode"
                 >
-                    <X size={20} className="text-slate-700" />
+                    <X size={18} />
                 </Link>
             </div>
 
@@ -112,11 +111,11 @@ export default function ZenModeClient({ course, videos }: ZenModeClientProps) {
                 <AnimatePresence>
                     {showHook && (
                         <motion.div
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.95, y: -50 }}
-                            transition={{ duration: 0.8, ease: "easeOut" }}
-                            className="fixed inset-0 z-40 flex items-center justify-center p-6 bg-slate-900/40 backdrop-blur-sm"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.8 }}
+                            className="fixed inset-0 z-40 flex items-center justify-center p-6 bg-text-main/10 backdrop-blur-sm"
                         >
                             <HookCard
                                 hooks={hooks}
@@ -132,57 +131,67 @@ export default function ZenModeClient({ course, videos }: ZenModeClientProps) {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ duration: 1, delay: 0.3 }}
-                        className="container mx-auto px-4 py-16 max-w-5xl"
+                        className="container mx-auto px-6 py-24 max-w-4xl"
                     >
                         {/* Course Header */}
-                        <div className="text-center mb-16">
+                        <div className="text-center mb-32 relative">
                             <motion.div
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.5 }}
+                                transition={{ delay: 0.5, duration: 1, ease: [0.16, 1, 0.3, 1] }}
                             >
-                                <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4 leading-tight">
+                                <span className="text-[0.65rem] font-bold uppercase tracking-[0.4em] text-text-sub mb-4 block">IMMERSIVE LEARNING</span>
+                                <h1 className="text-4xl md:text-6xl font-jp font-medium text-text-main mb-8 leading-tight max-w-3xl mx-auto italic">
                                     {course.title}
                                 </h1>
-                                <p className="text-lg text-slate-600 mb-8">
-                                    {course.channel_name}
-                                </p>
-                                <TimeSavedBadge minutesSaved={calculateTimeSaved()} />
+                                <div className="flex flex-col items-center gap-10">
+                                    <p className="text-[0.7rem] font-bold uppercase tracking-[0.2em] text-text-sub">
+                                        Source: {course.channel_name}
+                                    </p>
+                                    <TimeSavedBadge minutesSaved={calculateTimeSaved()} />
+                                </div>
                             </motion.div>
+
+                            {/* Decorative Line */}
+                            <div className="story-line absolute left-1/2 -bottom-20 -translate-x-1/2 h-16 w-px opacity-10" />
                         </div>
 
                         {/* Summary Content with Tracing Beam */}
-                        <TracingBeam className="px-6">
-                            <div className="space-y-8">
-                                {summaryBlocks.length > 0 ? (
-                                    summaryBlocks.map((block, index) => (
-                                        <InteractiveSummaryBlock
-                                            key={index}
-                                            title={block.title}
-                                            content={block.content}
-                                            timestamp={block.timestamp}
-                                            onPlay={(time) => console.log("Play at:", time)}
-                                            onQuiz={() => console.log("Create quiz for:", block.title)}
-                                            onNote={() => console.log("Save note for:", block.title)}
-                                        />
-                                    ))
-                                ) : (
-                                    <div className="text-center py-20">
-                                        <p className="text-slate-500 italic">
-                                            {selectedVideo?.status === "completed"
-                                                ? "No summary content available yet."
-                                                : "Summary is being generated..."}
-                                        </p>
-                                    </div>
-                                )}
-                            </div>
-                        </TracingBeam>
+                        <div className="relative">
+                            <TracingBeam className="px-10">
+                                <div className="space-y-4">
+                                    {summaryBlocks.length > 0 ? (
+                                        summaryBlocks.map((block, index) => (
+                                            <InteractiveSummaryBlock
+                                                key={index}
+                                                title={block.title}
+                                                content={block.content}
+                                                timestamp={block.timestamp}
+                                                onPlay={(time) => console.log("Play at:", time)}
+                                                onQuiz={() => console.log("Create quiz for:", block.title)}
+                                                onNote={() => console.log("Save note for:", block.title)}
+                                            />
+                                        ))
+                                    ) : (
+                                        <div className="text-center py-40 border border-text-main/5 rounded-[3rem] bg-white">
+                                            <p className="text-text-sub font-jp italic text-xl tracking-widest opacity-30">
+                                                {selectedVideo?.status === "completed"
+                                                    ? "NO SYNTHESIS AVAILABLE"
+                                                    : "SYNTHESIZING CORE CONCEPTS..."}
+                                            </p>
+                                        </div>
+                                    )}
+                                </div>
+                            </TracingBeam>
+                        </div>
 
                         {/* Bottom Spacer */}
-                        <div className="h-32" />
+                        <div className="h-64" />
                     </motion.div>
                 )}
             </div>
+
+            <div className="story-line fixed left-1/2 top-0 bottom-0 -translate-x-1/2 w-px opacity-[0.02] pointer-events-none" />
         </div>
     );
 }

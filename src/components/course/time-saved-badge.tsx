@@ -20,27 +20,26 @@ export const TimeSavedBadge = ({ minutesSaved, className }: TimeSavedBadgeProps)
 
     return (
         <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
+            initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             className={cn(
-                "inline-flex items-center gap-3 px-6 py-3 rounded-full card-glass border-accent/20 bg-accent/5",
-                "shadow-xl shadow-accent/5",
+                "inline-flex items-center gap-5 px-8 py-4 rounded-2xl bg-white border border-text-main/10 shadow-sm",
                 className
             )}
         >
-            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-accent flex items-center justify-center text-white">
+            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-text-main flex items-center justify-center text-bg-main shadow-lg transition-transform hover:scale-110">
                 <Timer size={18} />
             </div>
             <div className="flex flex-col">
-                <span className="text-[10px] uppercase tracking-wider font-bold text-accent/80 leading-none mb-1">
-                    Thời gian đã tiết kiệm
+                <span className="text-[0.6rem] font-bold uppercase tracking-[0.2em] text-text-sub leading-none mb-1.5">
+                    TIME SAVED
                 </span>
-                <span className="text-lg font-bold text-slate-900 leading-none">
+                <span className="text-xl font-jp font-medium text-text-main leading-none">
                     {label}
                 </span>
             </div>
-            <div className="ml-2 pl-4 border-l border-accent/20 text-accent">
+            <div className="ml-4 pl-6 border-l border-text-main/5 text-text-main opacity-20">
                 <CheckCircle size={20} />
             </div>
         </motion.div>

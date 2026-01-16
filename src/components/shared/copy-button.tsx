@@ -26,10 +26,10 @@ export function CopyButton({ text, className = "" }: CopyButtonProps) {
     return (
         <button
             onClick={handleCopy}
-            className={`inline-flex items-center justify-center p-2 rounded-lg hover:bg-muted transition-colors text-muted-foreground hover:text-foreground ${className}`}
+            className={`w-12 h-12 rounded-full border border-text-main/10 flex items-center justify-center hover:bg-text-main hover:text-bg-main transition-all shadow-sm active:scale-90 ${className}`}
             title="Copy to clipboard"
         >
-            {isCopied ? <Check size={18} className="text-green-500" /> : <Copy size={18} />}
+            {isCopied ? <Check size={16} /> : <Copy size={16} />}
         </button>
     );
 }

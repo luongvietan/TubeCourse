@@ -2,7 +2,6 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import { GlassCard } from "@/components/ui/glass-card";
 import { Sparkles, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -15,42 +14,43 @@ interface HookCardProps {
 export const HookCard = ({ hooks, className, onStartLearning }: HookCardProps) => {
     return (
         <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className={cn("w-full max-w-2xl mx-auto", className)}
         >
-            <GlassCard
-                gradient
-                className="p-8 md:p-10 border-accent/20 shadow-xl shadow-accent/5 overflow-hidden relative"
-            >
-                {/* Decorative Background Beams effect simplified for a card */}
-                <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-accent/10 rounded-full blur-3xl pointer-events-none" />
-                <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-32 h-32 bg-accent/5 rounded-full blur-2xl pointer-events-none" />
+            <div className="bg-bg-main border border-text-main/10 rounded-[2.5rem] p-12 md:p-16 shadow-2xl relative overflow-hidden group">
+                {/* Visual Decoration */}
+                <div className="absolute top-0 left-0 w-full h-1 bg-text-main/5" />
+                <div className="absolute top-0 left-0 h-full w-1 bg-text-main/5" />
+                <div className="story-line absolute top-10 bottom-10 left-10 w-px opacity-5" />
+                <div className="scan absolute inset-0 pointer-events-none opacity-5" />
 
                 <div className="relative z-10">
-                    <div className="flex items-center gap-2 text-accent mb-6">
-                        <Sparkles size={20} className="animate-pulse" />
-                        <span className="text-xs font-bold tracking-widest uppercase pb-0.5">The Knowledge Hook</span>
+                    <div className="flex items-center gap-3 text-text-main mb-8">
+                        <Sparkles size={16} className="fill-text-main" />
+                        <span className="text-[0.65rem] font-bold tracking-[0.3em] uppercase">The Knowledge Hook</span>
                     </div>
 
-                    <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-8 leading-tight">
-                        Chỉ trong 15 giây, đây là những gì bạn cần biết:
+                    <h2 className="font-jp font-medium text-3xl md:text-4xl text-text-main mb-12 leading-tight">
+                        Chỉ trong 15 giây, <br />
+                        đây là những gì bạn cần biết:
                     </h2>
 
-                    <div className="space-y-6 mb-10">
+                    <div className="space-y-8 mb-16">
                         {hooks.map((hook, index) => (
                             <motion.div
                                 key={index}
                                 initial={{ opacity: 0, x: -10 }}
                                 animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 0.2 + (index * 0.15), duration: 0.5 }}
-                                className="flex items-start gap-4"
+                                transition={{ delay: 0.3 + (index * 0.15), duration: 0.8 }}
+                                className="flex items-start gap-6 group/item"
                             >
-                                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center text-accent text-xs font-bold">
-                                    {index + 1}
+                                <div className="flex-shrink-0 w-8 h-8 rounded-full border border-text-main/10 flex items-center justify-center text-text-main text-[0.65rem] font-bold group-hover/item:bg-text-main group-hover/item:text-bg-main transition-all duration-500">
+                                    {String(index + 1).padStart(2, '0')}
                                 </div>
-                                <p className="text-lg text-slate-700 font-medium leading-relaxed">
+                                <p className="text-lg text-text-main font-jp leading-relaxed">
                                     {hook}
                                 </p>
                             </motion.div>
@@ -59,13 +59,13 @@ export const HookCard = ({ hooks, className, onStartLearning }: HookCardProps) =
 
                     <button
                         onClick={onStartLearning}
-                        className="w-full btn-primary py-4 rounded-xl flex items-center justify-center gap-2 group shadow-emerald-200/50 shadow-lg"
+                        className="w-full btn-primary py-5 rounded-2xl flex items-center justify-center gap-4 group transition-all"
                     >
-                        Bắt đầu học ngay
+                        <span className="text-[0.75rem] font-bold uppercase tracking-[0.2em]">Bắt đầu học ngay</span>
                         <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
                     </button>
                 </div>
-            </GlassCard>
+            </div>
         </motion.div>
     );
 };

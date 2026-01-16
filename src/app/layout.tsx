@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Manrope, Zen_Old_Mincho } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const manrope = Manrope({
+  variable: "--font-manrope",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const zenOldMincho = Zen_Old_Mincho({
+  variable: "--font-zen-old-mincho",
+  weight: ["400", "500", "600", "700", "900"],
   subsets: ["latin"],
 });
 
@@ -31,19 +32,17 @@ export const metadata: Metadata = {
   },
 };
 
-import { CustomCursor } from "@/components/ui/custom-cursor";
-
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="scroll-smooth">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${manrope.variable} ${zenOldMincho.variable} antialiased`}
       >
-        <CustomCursor />
+        <div className="noise-bg" />
         {children}
       </body>
     </html>

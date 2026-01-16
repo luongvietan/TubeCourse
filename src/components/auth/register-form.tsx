@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Loader2, CheckCircle } from "lucide-react";
+import { motion } from "framer-motion";
 import { registerSchema, type RegisterInput } from "@/schemas/auth";
 import { createClient } from "@/lib/supabase/client";
 
@@ -58,150 +59,162 @@ export function RegisterForm() {
     };
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
             {/* Error Message */}
             {error && (
-                <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm">
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="p-4 rounded-2xl bg-destructive/5 border border-destructive/10 text-destructive text-[0.7rem] font-bold uppercase tracking-widest text-center"
+                >
                     {error}
-                </div>
+                </motion.div>
             )}
 
             {/* Success Message */}
             {success && (
-                <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 text-sm flex items-center gap-2">
-                    <CheckCircle size={16} />
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="p-4 rounded-2xl bg-text-main text-bg-main text-[0.7rem] font-bold uppercase tracking-widest text-center flex items-center justify-center gap-3 shadow-2xl"
+                >
+                    <CheckCircle size={14} />
                     {success}
-                </div>
+                </motion.div>
             )}
 
-            {/* Name Field */}
-            <div className="space-y-2">
-                <label htmlFor="full_name" className="text-sm font-medium text-foreground">
-                    Full Name <span className="text-muted-foreground">(optional)</span>
-                </label>
-                <input
-                    id="full_name"
-                    type="text"
-                    autoComplete="name"
-                    placeholder="John Doe"
-                    className="w-full px-4 py-3 rounded-lg border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-colors"
-                    {...register("full_name")}
-                />
-                {errors.full_name && (
-                    <p className="text-sm text-destructive">{errors.full_name.message}</p>
-                )}
-            </div>
-
-            {/* Email Field */}
-            <div className="space-y-2">
-                <label htmlFor="email" className="text-sm font-medium text-foreground">
-                    Email
-                </label>
-                <input
-                    id="email"
-                    type="email"
-                    autoComplete="email"
-                    placeholder="name@example.com"
-                    className="w-full px-4 py-3 rounded-lg border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-colors"
-                    {...register("email")}
-                />
-                {errors.email && (
-                    <p className="text-sm text-destructive">{errors.email.message}</p>
-                )}
-            </div>
-
-            {/* Password Field */}
-            <div className="space-y-2">
-                <label htmlFor="password" className="text-sm font-medium text-foreground">
-                    Password
-                </label>
-                <div className="relative">
+            <div className="space-y-8">
+                {/* Name Field */}
+                <div className="space-y-3">
+                    <label htmlFor="full_name" className="text-[0.65rem] font-extrabold uppercase tracking-widest text-text-main block">
+                        Designation (Full Name) <span className="opacity-40 ml-2">-- OPTIONAL</span>
+                    </label>
                     <input
-                        id="password"
-                        type={showPassword ? "text" : "password"}
-                        autoComplete="new-password"
-                        placeholder="Create a strong password"
-                        className="w-full px-4 py-3 pr-12 rounded-lg border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-colors"
-                        {...register("password")}
+                        id="full_name"
+                        type="text"
+                        autoComplete="name"
+                        placeholder="ANONYMOUS LEARNER"
+                        className="w-full px-6 py-4 rounded-2xl border border-text-main/5 bg-text-main/5 text-text-main font-jp text-sm focus:outline-none focus:ring-1 focus:ring-text-main/20 focus:bg-transparent transition-all placeholder:opacity-20 uppercase tracking-widest"
+                        {...register("full_name")}
                     />
-                    <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                    </button>
+                    {errors.full_name && (
+                        <p className="text-[0.6rem] font-bold text-destructive uppercase tracking-widest mt-1">{errors.full_name.message}</p>
+                    )}
                 </div>
-                {errors.password && (
-                    <p className="text-sm text-destructive">{errors.password.message}</p>
-                )}
-            </div>
 
-            {/* Confirm Password Field */}
-            <div className="space-y-2">
-                <label htmlFor="confirmPassword" className="text-sm font-medium text-foreground">
-                    Confirm Password
-                </label>
-                <div className="relative">
+                {/* Email Field */}
+                <div className="space-y-3">
+                    <label htmlFor="email" className="text-[0.65rem] font-extrabold uppercase tracking-widest text-text-main block">
+                        Identity (Email)
+                    </label>
                     <input
-                        id="confirmPassword"
-                        type={showConfirmPassword ? "text" : "password"}
-                        autoComplete="new-password"
-                        placeholder="Confirm your password"
-                        className="w-full px-4 py-3 pr-12 rounded-lg border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-colors"
-                        {...register("confirmPassword")}
+                        id="email"
+                        type="email"
+                        autoComplete="email"
+                        placeholder="NAME@DOMAIN.COM"
+                        className="w-full px-6 py-4 rounded-2xl border border-text-main/5 bg-text-main/5 text-text-main font-jp text-sm focus:outline-none focus:ring-1 focus:ring-text-main/20 focus:bg-transparent transition-all placeholder:opacity-20 uppercase tracking-widest"
+                        {...register("email")}
                     />
-                    <button
-                        type="button"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                        {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                    </button>
+                    {errors.email && (
+                        <p className="text-[0.6rem] font-bold text-destructive uppercase tracking-widest mt-1">{errors.email.message}</p>
+                    )}
                 </div>
-                {errors.confirmPassword && (
-                    <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>
-                )}
+
+                {/* Password Field */}
+                <div className="space-y-3">
+                    <label htmlFor="password" className="text-[0.65rem] font-extrabold uppercase tracking-widest text-text-main block">
+                        Verification (Password)
+                    </label>
+                    <div className="relative">
+                        <input
+                            id="password"
+                            type={showPassword ? "text" : "password"}
+                            autoComplete="new-password"
+                            placeholder="••••••••"
+                            className="w-full px-6 py-4 pr-16 rounded-2xl border border-text-main/5 bg-text-main/5 text-text-main font-jp text-sm focus:outline-none focus:ring-1 focus:ring-text-main/20 focus:bg-transparent transition-all placeholder:opacity-20"
+                            {...register("password")}
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-6 top-1/2 -translate-y-1/2 text-text-sub hover:text-text-main transition-colors"
+                        >
+                            {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                        </button>
+                    </div>
+                    {errors.password && (
+                        <p className="text-[0.6rem] font-bold text-destructive uppercase tracking-widest mt-1">{errors.password.message}</p>
+                    )}
+                </div>
+
+                {/* Confirm Password Field */}
+                <div className="space-y-3">
+                    <label htmlFor="confirmPassword" className="text-[0.65rem] font-extrabold uppercase tracking-widest text-text-main block">
+                        Confirm Verification
+                    </label>
+                    <div className="relative">
+                        <input
+                            id="confirmPassword"
+                            type={showConfirmPassword ? "text" : "password"}
+                            autoComplete="new-password"
+                            placeholder="••••••••"
+                            className="w-full px-6 py-4 pr-16 rounded-2xl border border-text-main/5 bg-text-main/5 text-text-main font-jp text-sm focus:outline-none focus:ring-1 focus:ring-text-main/20 focus:bg-transparent transition-all placeholder:opacity-20"
+                            {...register("confirmPassword")}
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                            className="absolute right-6 top-1/2 -translate-y-1/2 text-text-sub hover:text-text-main transition-colors"
+                        >
+                            {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                        </button>
+                    </div>
+                    {errors.confirmPassword && (
+                        <p className="text-[0.6rem] font-bold text-destructive uppercase tracking-widest mt-1">{errors.confirmPassword.message}</p>
+                    )}
+                </div>
             </div>
 
             {/* Submit Button */}
-            <button
-                type="submit"
-                disabled={isLoading || !!success}
-                className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-                {isLoading ? (
-                    <>
-                        <Loader2 className="animate-spin" size={18} />
-                        Creating account...
-                    </>
-                ) : (
-                    "Create account"
-                )}
-            </button>
-
-            {/* Terms */}
-            <p className="text-center text-xs text-muted-foreground">
-                By creating an account, you agree to our{" "}
-                <Link href="/terms" className="text-accent hover:text-accent-hover">
-                    Terms of Service
-                </Link>{" "}
-                and{" "}
-                <Link href="/privacy" className="text-accent hover:text-accent-hover">
-                    Privacy Policy
-                </Link>
-            </p>
-
-            {/* Login Link */}
-            <p className="text-center text-sm text-muted-foreground">
-                Already have an account?{" "}
-                <Link
-                    href="/login"
-                    className="text-accent hover:text-accent-hover font-medium transition-colors"
+            <div className="space-y-8">
+                <button
+                    type="submit"
+                    disabled={isLoading || !!success}
+                    className="w-full btn-primary py-5 rounded-2xl flex items-center justify-center gap-4 group disabled:opacity-50"
                 >
-                    Sign in
-                </Link>
-            </p>
+                    {isLoading ? (
+                        <>
+                            <Loader2 className="animate-spin" size={16} />
+                            <span className="text-[0.75rem] font-bold uppercase tracking-[0.2em]">Processing...</span>
+                        </>
+                    ) : (
+                        <span className="text-[0.75rem] font-bold uppercase tracking-[0.2em]">Initiate Account</span>
+                    )}
+                </button>
+
+                {/* Terms */}
+                <p className="text-center text-[0.6rem] font-bold uppercase tracking-[0.2em] text-text-sub/60 px-4 leading-relaxed">
+                    By initiating, you agree to our{" "}
+                    <Link href="/terms" className="text-text-main hover:line-through transition-all">
+                        Terms
+                    </Link>{" "}
+                    and{" "}
+                    <Link href="/privacy" className="text-text-main hover:line-through transition-all">
+                        Privacy
+                    </Link>
+                </p>
+
+                {/* Login Link */}
+                <p className="text-center text-[0.65rem] font-bold uppercase tracking-widest text-text-sub border-t border-text-main/5 pt-8">
+                    Existing user?{" "}
+                    <Link
+                        href="/login"
+                        className="text-text-main hover:line-through transition-all underline decoration-text-main/10 underline-offset-8 decoration-2"
+                    >
+                        Sign In
+                    </Link>
+                </p>
+            </div>
         </form>
     );
 }

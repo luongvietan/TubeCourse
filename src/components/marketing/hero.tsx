@@ -1,89 +1,115 @@
 "use client";
 
 import Link from "next/link";
-import BlurText from "@/components/reactbits/BlurText";
-import Squares from "@/components/reactbits/Squares";
-import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
+import { Magnetic } from "@/components/ui/magnetic";
+import { ArrowRight } from "lucide-react";
 
 export function Hero() {
-    return (
-        <section className="relative min-h-[90vh] flex items-center pt-24 pb-16 overflow-hidden">
-            {/* Background Squares */}
-            <div className="absolute inset-0 z-0 opacity-20 pointer-events-none">
-                <Squares
-                    direction="diagonal"
-                    speed={0.5}
-                    squareSize={50}
-                    borderColor="#333"
-                    hoverFillColor="#222"
-                />
-            </div>
+    const containerVariants: any = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.2,
+                delayChildren: 0.3,
+            },
+        },
+    };
 
-            <div className="container-custom relative z-10">
-                <div className="max-w-3xl">
-                    {/* Eyebrow */}
-                    <div className="mb-6">
-                        <span className="tag tag-muted">
+    const itemVariants: any = {
+        hidden: { y: 40, opacity: 0 },
+        visible: {
+            y: 0,
+            opacity: 1,
+            transition: {
+                duration: 1,
+                ease: "easeOut",
+            },
+        },
+    };
+
+    const lineRevealVariants: any = {
+        hidden: { y: "100%" },
+        visible: {
+            y: 0,
+            transition: {
+                duration: 1.2,
+                ease: "easeOut",
+            },
+        },
+    };
+
+    return (
+        <section className="min-h-[100dvh] flex flex-col relative items-center justify-center bg-background overflow-hidden px-container">
+            {/* Content Container */}
+            <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="z-10 text-center relative w-full max-w-3xl"
+            >
+                {/* Hero Chip */}
+                <motion.div variants={itemVariants} className="mb-8 flex justify-center">
+                    <div className="px-3 py-1 border border-text-main/10 rounded-full bg-white/50 backdrop-blur-sm flex items-center gap-2 shadow-sm">
+                        <span className="w-1.5 h-1.5 bg-text-main rounded-full animate-pulse" />
+                        <span className="text-[0.65rem] uppercase tracking-[0.2em] font-medium text-text-sub">
                             YouTube → Structured Learning
                         </span>
                     </div>
+                </motion.div>
 
-                    {/* Main Heading */}
-                    <h1 className="text-display mb-6">
-                        <BlurText
-                            text="Turn any YouTube playlist into a"
-                            className="inline-block mr-2"
-                            delay={0.05}
-                        />
-                        <span className="block text-accent">
-                            <BlurText
-                                text="complete course"
-                                className="inline-block text-accent"
-                                delay={0.05}
-                            />
-                        </span>
-                    </h1>
+                {/* Main Heading */}
+                <h1 className="font-jp font-medium text-[9vw] md:text-7xl leading-tight tracking-tight text-text-main mb-8">
+                    <span className="line-mask">
+                        <motion.span variants={lineRevealVariants} className="block">
+                            Turn any playlist
+                        </motion.span>
+                    </span>
+                    <span className="line-mask">
+                        <motion.span variants={lineRevealVariants} className="block text-text-sub">
+                            into a structured
+                        </motion.span>
+                    </span>
+                    <span className="line-mask">
+                        <motion.span variants={lineRevealVariants} className="block">
+                            AI-powered course.
+                        </motion.span>
+                    </span>
+                </h1>
 
-                    {/* Subheading */}
-                    <p className="text-body text-lg max-w-xl mb-10">
-                        Paste a playlist link. Get AI-generated summaries, chapter breakdowns,
-                        quizzes, and study notes. Learn faster, not longer.
-                    </p>
+                {/* Subtext */}
+                <motion.p
+                    variants={itemVariants}
+                    className="text-sm md:text-base text-text-sub leading-loose mt-4 mb-12 font-jp max-w-xl mx-auto"
+                >
+                    Paste a link. Get AI summaries, chapter breakdowns, quizzes, and study notes.
+                    Understand more, search less. Built for curious minds.
+                </motion.p>
 
-                    {/* CTA */}
-                    <div className="flex flex-col sm:flex-row items-start gap-4">
-                        <Button asChild size="lg" className="font-medium">
-                            <Link href="/register">
-                                Try it free
-                                <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                                </svg>
-                            </Link>
-                        </Button>
-                        <p className="text-caption self-center">
-                            No credit card required
-                        </p>
-                    </div>
+                {/* CTA */}
+                <motion.div variants={itemVariants} className="flex justify-center">
+                    <Magnetic>
+                        <Link href="/register" className="btn-primary group">
+                            <span className="relative z-10">Start Learning Free</span>
+                            <ArrowRight className="w-3.5 h-3.5 relative z-10 group-hover:translate-x-1 transition-transform" />
+                            <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out" />
+                        </Link>
+                    </Magnetic>
+                </motion.div>
+            </motion.div>
 
-                    {/* Stats - Single row, subtle */}
-                    <div className="mt-16 pt-8 border-t border-border">
-                        <div className="flex flex-wrap gap-x-12 gap-y-4">
-                            <div>
-                                <div className="text-2xl font-semibold tracking-tight">2,400+</div>
-                                <div className="text-caption">Courses created</div>
-                            </div>
-                            <div>
-                                <div className="text-2xl font-semibold tracking-tight">12k+</div>
-                                <div className="text-caption">Hours saved</div>
-                            </div>
-                            <div>
-                                <div className="text-2xl font-semibold tracking-tight">4.9</div>
-                                <div className="text-caption">Average rating</div>
-                            </div>
-                        </div>
-                    </div>
+            {/* Vertical Scanline Animation */}
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1.5, duration: 1 }}
+                className="absolute bottom-12 w-full flex justify-center z-10"
+            >
+                <div className="w-px h-24 bg-text-main/10 relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-full h-full bg-text-main animate-[scan_2s_ease-in-out_infinite]" />
                 </div>
-            </div>
+            </motion.div>
         </section>
     );
 }

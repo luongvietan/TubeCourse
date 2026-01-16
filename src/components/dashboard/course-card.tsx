@@ -14,16 +14,17 @@ import { useTransition } from "react";
 import { deleteCourse } from "@/app/(dashboard)/dashboard/courses/actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { SpotlightCard } from "@/components/ui/spotlight-card";
 
 interface CourseCardProps {
     course: Course;
 }
 
 const statusConfig: Record<CourseStatus, { icon: React.ElementType; color: string; label: string }> = {
-    pending: { icon: Clock, color: "text-yellow-600", label: "Pending" },
-    processing: { icon: Loader2, color: "text-blue-600", label: "Processing" },
-    completed: { icon: CheckCircle2, color: "text-green-600", label: "Completed" },
-    failed: { icon: AlertCircle, color: "text-red-600", label: "Failed" },
+    pending: { icon: Clock, color: "text-text-sub", label: "Pending" },
+    processing: { icon: Loader2, color: "text-text-main", label: "Processing" },
+    completed: { icon: CheckCircle2, color: "text-text-main", label: "Completed" },
+    failed: { icon: AlertCircle, color: "text-destructive", label: "Failed" },
 };
 
 export function CourseCard({ course }: CourseCardProps) {
@@ -32,7 +33,6 @@ export function CourseCard({ course }: CourseCardProps) {
     const [isPending, startTransition] = useTransition();
     const router = useRouter();
 
-    // Try to get higher quality thumbnail if it's a YouTube default URL
     let thumbnailUrl = course.thumbnail_url;
     if (thumbnailUrl && thumbnailUrl.includes('i.ytimg.com/vi/')) {
         thumbnailUrl = thumbnailUrl.replace(/(default|mqdefault|sddefault)\.jpg$/, "hqdefault.jpg");
@@ -56,79 +56,94 @@ export function CourseCard({ course }: CourseCardProps) {
     };
 
     return (
-        <div className="card overflow-hidden group hover:shadow-md transition-all duration-300 relative">
+        <SpotlightCard className="group h-full bg-white border border-text-main/5 relative overflow-hidden rounded-[2.5rem] hover:shadow-2xl transition-all duration-700">
             <Link href={`/dashboard/courses/${course.id}`} className="block h-full">
-                {/* Thumbnail */}
-                <div className="relative aspect-video bg-muted border-b border-border/50">
+                {/* Thumbnail Area */}
+                <div className="relative aspect-video overflow-hidden">
                     {thumbnailUrl ? (
-                        <Image
-                            src={thumbnailUrl}
-                            alt={course.title}
-                            fill
-                            className="object-cover transition-transform duration-500 group-hover:scale-105"
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        />
+                        <div className="w-full h-full relative group-hover:grayscale-0 grayscale transition-all duration-1000 ease-soft">
+                            <Image
+                                src={thumbnailUrl}
+                                alt={course.title}
+                                fill
+                                className="object-cover transition-transform duration-[2s] ease-soft group-hover:scale-110"
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            />
+                            <div className="absolute inset-0 bg-text-main/5 group-hover:bg-transparent transition-colors duration-1000" />
+                        </div>
                     ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-muted/50">
-                            <Play className="w-12 h-12 text-muted-foreground/20" />
+                        <div className="w-full h-full flex items-center justify-center bg-text-main/5">
+                            <Play className="w-12 h-12 text-text-main/10" />
                         </div>
                     )}
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30 transform scale-90 group-hover:scale-100 transition-transform">
-                            <Play className="w-6 h-6 text-white fill-white ml-1" />
+
+                    {/* Overlay Hint */}
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center bg-text-main/20 backdrop-blur-[2px]">
+                        <div className="w-16 h-16 rounded-full bg-bg-main/90 border border-text-main/10 flex items-center justify-center text-text-main scale-50 group-hover:scale-100 transition-transform duration-700 ease-soft">
+                            <Play size={20} className="fill-text-main ml-1" />
                         </div>
                     </div>
+
+                    {/* Status Badge */}
+                    <div className="absolute top-6 left-6 z-20">
+                        <div className="px-4 py-1.5 rounded-full bg-bg-main/90 backdrop-blur-md border border-text-main/10 flex items-center gap-2 shadow-xl">
+                            <StatusIcon size={12} className={`${course.status === "processing" ? "animate-spin" : ""} ${status.color}`} />
+                            <span className="text-[0.55rem] font-extrabold uppercase tracking-[0.2em] text-text-main">{status.label}</span>
+                        </div>
+                    </div>
+
+                    <div className="scan absolute inset-0 opacity-[0.03] pointer-events-none" />
                 </div>
 
                 {/* Content */}
-                <div className="p-4">
-                    <div className="flex items-start justify-between gap-3 mb-2">
-                        <h3 className="font-semibold text-base line-clamp-2 leading-tight group-hover:text-accent transition-colors pr-6">
-                            {course.title}
-                        </h3>
-                        <div className={`shrink-0 pt-0.5 ${status.color}`} title={status.label}>
-                            <StatusIcon size={16} className={course.status === "processing" ? "animate-spin" : ""} />
+                <div className="p-8">
+                    <div className="story-line w-px h-8 absolute left-0 top-1/2 -translate-y-1/2 opacity-10 group-hover:h-12 transition-all duration-500" />
+
+                    <h3 className="font-jp font-medium text-xl text-text-main line-clamp-2 leading-tight group-hover:italic transition-all duration-700 mb-4 group-hover:pl-2">
+                        {course.title}
+                    </h3>
+
+                    <p className="text-[0.6rem] font-extrabold uppercase tracking-[0.3em] text-text-sub/40 mb-6 group-hover:text-text-sub transition-colors">{course.channel_name}</p>
+
+                    <div className="flex items-center gap-8 border-t border-text-main/5 pt-6">
+                        <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full bg-text-main/5 flex items-center justify-center border border-text-main/5">
+                                <VideoIcon size={12} className="text-text-main/40" />
+                            </div>
+                            <span className="text-[0.6rem] font-bold uppercase tracking-widest text-text-sub/60">{course.video_count} Arch.</span>
                         </div>
-                    </div>
-
-                    <p className="text-xs text-muted-foreground mb-3 line-clamp-1">{course.channel_name}</p>
-
-                    <div className="flex items-center gap-4 text-xs text-muted-foreground font-medium">
-                        <span className="flex items-center gap-1.5">
-                            <VideoIcon size={14} className="text-muted-foreground/70" />
-                            {course.video_count} videos
-                        </span>
-                        {/* Only show duration if processing is done/has duration */}
                         {course.total_duration && (
-                            <span className="flex items-center gap-1.5">
-                                <Clock size={14} className="text-muted-foreground/70" />
-                                {course.total_duration}
-                            </span>
+                            <div className="flex items-center gap-3">
+                                <div className="w-8 h-8 rounded-full bg-text-main/5 flex items-center justify-center border border-text-main/5">
+                                    <Clock size={12} className="text-text-main/40" />
+                                </div>
+                                <span className="text-[0.6rem] font-bold uppercase tracking-widest text-text-sub/60">{course.total_duration}</span>
+                            </div>
                         )}
                     </div>
                 </div>
             </Link>
 
             {/* Actions Menu */}
-            <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="absolute top-6 right-6 z-30 opacity-0 group-hover:opacity-100 transition-opacity">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild onClick={(e) => e.preventDefault()}>
-                        <button className="h-8 w-8 rounded-full bg-black/50 backdrop-blur-sm text-white flex items-center justify-center hover:bg-black/70 transition-colors">
+                        <button className="h-10 w-10 rounded-full bg-bg-main/90 border border-text-main/20 text-text-main flex items-center justify-center hover:bg-text-main hover:text-bg-main transition-all shadow-xl active:scale-90">
                             <MoreVertical size={16} />
                         </button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
+                    <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()} className="rounded-2xl border-text-main/10 bg-bg-main/95 backdrop-blur-md p-2 shadow-2xl min-w-[160px]">
                         <DropdownMenuItem
-                            className="text-destructive focus:text-destructive cursor-pointer"
+                            className="text-[0.6rem] font-extrabold uppercase tracking-[0.2em] text-destructive focus:text-destructive focus:bg-destructive/5 cursor-pointer rounded-xl px-4 py-3 transition-all"
                             onClick={handleDelete}
                             disabled={isPending}
                         >
-                            <Trash size={16} className="mr-2" />
-                            {isPending ? "Deleting..." : "Delete"}
+                            <Trash size={14} className="mr-3" />
+                            {isPending ? "..." : "Delete Course"}
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
-        </div>
+        </SpotlightCard>
     );
 }

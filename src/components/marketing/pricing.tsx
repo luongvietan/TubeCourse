@@ -1,16 +1,20 @@
 "use client";
 
 import Link from "next/link";
+import { SpotlightCard } from "@/components/ui/spotlight-card";
+import { Magnetic } from "@/components/ui/magnetic";
+import { Check } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const plans = [
     {
         name: "Starter",
         price: "$0",
         period: "forever",
-        description: "For casual learners",
+        description: "For casual learners starting their journey.",
         features: [
             "3 playlists / month",
-            "Basic summaries",
+            "Basic AI summaries",
             "Key takeaways",
         ],
         cta: "Get started",
@@ -20,7 +24,7 @@ const plans = [
         name: "Pro",
         price: "$19",
         period: "/ month",
-        description: "For serious learners",
+        description: "For serious learners who want the best.",
         features: [
             "Unlimited playlists",
             "Advanced AI summaries",
@@ -33,146 +37,85 @@ const plans = [
     },
 ];
 
-const teamPlan = {
-    name: "Team",
-    price: "$49",
-    period: "/ month",
-    description: "For organizations and learning groups",
-    features: [
-        "Everything in Pro",
-        "5 team members",
-        "Shared library",
-        "Analytics",
-        "Admin dashboard",
-    ],
-};
-
 export function Pricing() {
     return (
-        <section id="pricing" className="section-padding">
-            <div className="container-custom">
-                {/* Section Header */}
-                <div className="max-w-xl mb-12">
-                    <span className="tag tag-accent mb-4">
-                        Pricing
-                    </span>
-                    <h2 className="text-headline mb-4">
-                        Simple, transparent pricing
+        <section id="pricing" className="py-24 px-6 relative bg-bg-main overflow-hidden">
+            <div className="story-line h-full top-0 left-1/2 -translate-x-1/2 opacity-30" />
+
+            <div className="container-custom relative z-10">
+                <div className="text-center mb-16">
+                    <span className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-text-sub mb-3 block">Pricing</span>
+                    <h2 className="text-3xl md:text-4xl font-jp font-medium leading-[1.4] text-text-main">
+                        Simple, transparent<br />for every learner
                     </h2>
-                    <p className="text-body">
-                        Start free. Upgrade when you need more.
-                    </p>
                 </div>
 
-                {/* Main Plans - 2 columns */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
                     {plans.map((plan, index) => (
-                        <div
+                        <SpotlightCard
                             key={index}
-                            className={`
-                                relative p-8 rounded-lg transition-all
-                                ${plan.highlighted
-                                    ? "bg-foreground text-background"
-                                    : "bg-card border border-border"
-                                }
-                            `}
+                            className={cn(
+                                "flex flex-col p-8 md:p-12 rounded-2xl border transition-all duration-700",
+                                plan.highlighted
+                                    ? "bg-text-main text-bg-main border-transparent shadow-2xl scale-[1.02] z-10"
+                                    : "bg-white text-text-main border-text-main/5"
+                            )}
                         >
-                            {/* Plan header */}
-                            <div className="mb-6">
-                                <div className="flex items-center gap-2 mb-2">
-                                    <h3 className={`text-title ${plan.highlighted ? "text-background" : ""}`}>
-                                        {plan.name}
-                                    </h3>
-                                    {plan.highlighted && (
-                                        <span className="text-xs font-medium px-2 py-0.5 bg-accent text-white rounded">
-                                            Popular
-                                        </span>
-                                    )}
+                            <div className="mb-8">
+                                <h3 className="text-sm uppercase tracking-[0.3em] font-bold mb-2 opacity-60">
+                                    {plan.name}
+                                </h3>
+                                <div className="flex items-baseline gap-1 mb-4">
+                                    <span className="text-5xl font-jp font-medium tracking-tight">
+                                        {plan.price}
+                                    </span>
+                                    <span className="text-sm opacity-50 font-jp">
+                                        {plan.period}
+                                    </span>
                                 </div>
-                                <p className={`text-sm ${plan.highlighted ? "text-background/60" : "text-muted-foreground"}`}>
+                                <p className="text-sm leading-relaxed opacity-70 font-jp">
                                     {plan.description}
                                 </p>
                             </div>
 
-                            {/* Price */}
-                            <div className="mb-8">
-                                <span className={`text-4xl font-semibold tracking-tight ${plan.highlighted ? "text-background" : ""}`}>
-                                    {plan.price}
-                                </span>
-                                <span className={`text-sm ml-1 ${plan.highlighted ? "text-background/60" : "text-muted-foreground"}`}>
-                                    {plan.period}
-                                </span>
-                            </div>
-
-                            {/* Features */}
-                            <ul className="space-y-3 mb-8">
+                            <ul className="space-y-4 mb-12 flex-1">
                                 {plan.features.map((feature, featureIndex) => (
                                     <li key={featureIndex} className="flex items-center gap-3">
-                                        <svg
-                                            className={`w-4 h-4 flex-shrink-0 ${plan.highlighted ? "text-accent" : "text-muted-foreground"}`}
-                                            fill="none"
-                                            stroke="currentColor"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                        </svg>
-                                        <span className={`text-sm ${plan.highlighted ? "text-background/80" : "text-muted-foreground"}`}>
+                                        <div className={cn(
+                                            "w-5 h-5 rounded-full flex items-center justify-center border",
+                                            plan.highlighted ? "border-bg-main/20" : "border-text-main/10"
+                                        )}>
+                                            <Check className="w-3 h-3 opacity-60" />
+                                        </div>
+                                        <span className="text-sm font-jp opacity-80">
                                             {feature}
                                         </span>
                                     </li>
                                 ))}
                             </ul>
 
-                            {/* CTA Button */}
-                            <Link
-                                href="/register"
-                                className={`
-                                    block w-full text-center py-3 rounded-md font-medium transition-all text-sm
-                                    ${plan.highlighted
-                                        ? "bg-accent text-accent-foreground hover:opacity-90"
-                                        : "bg-muted hover:bg-muted/80 text-foreground"
-                                    }
-                                `}
-                            >
-                                {plan.cta}
-                            </Link>
-                        </div>
+                            <Magnetic>
+                                <Link
+                                    href="/register"
+                                    className={cn(
+                                        "w-full block text-center py-4 rounded-full text-[0.65rem] font-bold uppercase tracking-[0.2em] transition-all",
+                                        plan.highlighted
+                                            ? "bg-bg-main text-text-main hover:bg-white"
+                                            : "bg-text-main text-bg-main hover:opacity-90"
+                                    )}
+                                >
+                                    {plan.cta}
+                                </Link>
+                            </Magnetic>
+                        </SpotlightCard>
                     ))}
                 </div>
 
-                {/* Team Plan - Full width */}
-                <div className="p-8 rounded-lg bg-surface border border-border">
-                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-                        <div>
-                            <div className="flex items-center gap-3 mb-2">
-                                <h3 className="text-title">{teamPlan.name}</h3>
-                                <span className="text-2xl font-semibold tracking-tight">
-                                    {teamPlan.price}
-                                    <span className="text-sm font-normal text-muted-foreground">{teamPlan.period}</span>
-                                </span>
-                            </div>
-                            <p className="text-caption mb-4">{teamPlan.description}</p>
-                            <ul className="flex flex-wrap gap-x-6 gap-y-2">
-                                {teamPlan.features.map((feature, index) => (
-                                    <li key={index} className="flex items-center gap-2 text-sm text-muted-foreground">
-                                        <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                        </svg>
-                                        {feature}
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                        <Link href="/contact" className="btn-secondary whitespace-nowrap">
-                            Contact sales
-                        </Link>
-                    </div>
+                <div className="mt-16 text-center">
+                    <p className="text-[0.65rem] uppercase tracking-[0.2em] text-text-sub">
+                        14-day money-back guarantee on all paid plans.
+                    </p>
                 </div>
-
-                {/* Guarantee */}
-                <p className="text-center text-caption mt-8">
-                    14-day money-back guarantee on all paid plans
-                </p>
             </div>
         </section>
     );
