@@ -61,14 +61,14 @@ export function RegisterForm() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             {/* Error Message */}
             {error && (
-                <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 text-sm">
+                <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm">
                     {error}
                 </div>
             )}
 
             {/* Success Message */}
             {success && (
-                <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20 text-green-500 text-sm flex items-center gap-2">
+                <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 text-sm flex items-center gap-2">
                     <CheckCircle size={16} />
                     {success}
                 </div>
@@ -88,7 +88,7 @@ export function RegisterForm() {
                     {...register("full_name")}
                 />
                 {errors.full_name && (
-                    <p className="text-sm text-red-500">{errors.full_name.message}</p>
+                    <p className="text-sm text-destructive">{errors.full_name.message}</p>
                 )}
             </div>
 
@@ -106,7 +106,7 @@ export function RegisterForm() {
                     {...register("email")}
                 />
                 {errors.email && (
-                    <p className="text-sm text-red-500">{errors.email.message}</p>
+                    <p className="text-sm text-destructive">{errors.email.message}</p>
                 )}
             </div>
 
@@ -133,7 +133,7 @@ export function RegisterForm() {
                     </button>
                 </div>
                 {errors.password && (
-                    <p className="text-sm text-red-500">{errors.password.message}</p>
+                    <p className="text-sm text-destructive">{errors.password.message}</p>
                 )}
             </div>
 
@@ -160,7 +160,7 @@ export function RegisterForm() {
                     </button>
                 </div>
                 {errors.confirmPassword && (
-                    <p className="text-sm text-red-500">{errors.confirmPassword.message}</p>
+                    <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>
                 )}
             </div>
 

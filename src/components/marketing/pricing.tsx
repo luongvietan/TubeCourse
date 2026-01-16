@@ -129,8 +129,8 @@ export function Pricing() {
                                 className={`
                                     block w-full text-center py-3 rounded-md font-medium transition-all text-sm
                                     ${plan.highlighted
-                                        ? "bg-accent text-white hover:bg-accent-hover"
-                                        : "bg-muted hover:bg-border text-foreground"
+                                        ? "bg-accent text-accent-foreground hover:opacity-90"
+                                        : "bg-muted hover:bg-muted/80 text-foreground"
                                     }
                                 `}
                             >

@@ -44,7 +44,7 @@ export function Niches() {
                             className={`
                 px-4 py-2 rounded-full text-sm font-medium transition-all cursor-default
                 ${niche.highlighted
-                                    ? "bg-accent text-white shadow-lg shadow-accent/25"
+                                    ? "bg-accent text-accent-foreground shadow-lg shadow-accent/25"
                                     : "bg-muted text-muted-foreground hover:bg-accent/10 hover:text-accent"
                                 }
               `}
