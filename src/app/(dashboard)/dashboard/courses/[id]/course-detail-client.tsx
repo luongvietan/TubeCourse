@@ -102,15 +102,23 @@ export default function CourseDetailClient({ course, videos }: CourseDetailClien
                                             </span>
                                         </div>
                                     </div>
-                                    <a
-                                        href={course.playlist_url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="btn-secondary text-sm py-2 px-3"
-                                    >
-                                        <ExternalLink size={16} />
-                                        YouTube
-                                    </a>
+                                    <div className="flex items-center gap-2">
+                                        <Link
+                                            href={`/dashboard/courses/${course.id}/zen`}
+                                            className="btn-primary text-sm py-2 px-4"
+                                        >
+                                            🧘 Zen Mode
+                                        </Link>
+                                        <a
+                                            href={course.playlist_url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="btn-secondary text-sm py-2 px-3"
+                                        >
+                                            <ExternalLink size={16} />
+                                            YouTube
+                                        </a>
+                                    </div>
                                 </div>
 
                                 {/* Progress Bar */}
