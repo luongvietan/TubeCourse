@@ -31,6 +31,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { CustomCursor } from "@/components/ui/custom-cursor";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -41,6 +43,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <CustomCursor />
         {children}
       </body>
     </html>
